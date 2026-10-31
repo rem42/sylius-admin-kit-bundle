@@ -188,7 +188,7 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
         }
 
         if ($config['navbar']) {
-            $hooks['sylius_admin.common.component.navbar.items'] = [$hookable => [
+            $hooks['sylius_admin.common.component.navbar.menu'] = [$hookable => [
                 'template' => \sprintf($template, 'badge'),
                 'priority' => 100,
                 'configuration' => ['placement' => 'navbar'],
