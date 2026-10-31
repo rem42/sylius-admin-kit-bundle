@@ -1,0 +1,11 @@
+# Variant "disabled": every feature of the kit explicitly turned off (its defaults), whatever the main configuration
+# enables. Tests boot it with AdminKitWebTestCase::bootClient($theme, 'disabled') to check that nothing is rendered.
+rem42_sylius_admin_kit:
+    quick_filter:
+        enabled: false
+    active_filters:
+        enabled: false
+    environment:
+        enabled: false
+    entity_filter_autocomplete:
+        enabled: false

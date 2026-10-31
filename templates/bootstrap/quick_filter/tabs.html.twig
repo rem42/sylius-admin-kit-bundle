@@ -1,0 +1,32 @@
+{# Quick filter tabs above the grid: one link per value of the enum filter that has a "quick_filter" option. #}
+{% set quick_filter = rem42_admin_kit_quick_filter(hookable_metadata.context.resources.definition|default(null)) %}
+{% if quick_filter %}
+    {# Underlined tabs (Tabler nav-bordered) that scroll sideways instead of wrapping on narrow screens.
+       Self-contained tweaks: inactive tabs use the body text colour (the theme "secondary" grey is about 2:1),
+       and the keyboard focus gets a ring back (Tabler sets the nav-link focus shadow to 0). #}
+    <style data-admin-kit="quick-filter-style">
+        [data-admin-kit="quick-filter"] .nav { --tblr-nav-link-color: var(--tblr-secondary-color); --tblr-nav-link-hover-color: var(--tblr-body-color); min-width: max-content; }
+        [data-admin-kit="quick-filter"] .nav-item + .nav-item { margin-left: .25rem; }
+        [data-admin-kit="quick-filter"] .nav-link { padding-inline: .5rem; }
+        [data-admin-kit="quick-filter"] .nav-link:focus-visible { box-shadow: inset 0 0 0 2px var(--tblr-primary); border-radius: var(--tblr-border-radius) var(--tblr-border-radius) 0 0; }
+    </style>
+    <nav data-admin-kit="quick-filter" aria-label="{{ quick_filter.label }}" class="overflow-x-auto mb-3">
+        <ul class="nav nav-bordered flex-nowrap">
+            {% for tab in quick_filter.tabs %}
+                <li class="nav-item">
+                    <a href="{{ tab.url }}"
+                       class="nav-link d-flex align-items-center gap-2 text-nowrap {{ tab.active ? 'active fw-medium' }}"
+                       {% if tab.active %}aria-current="page"{% endif %}>
+                        {% if tab.tone %}
+                            <span class="status-dot status-{{ tab.tone == 'gray' ? 'secondary' : tab.tone }} flex-shrink-0" aria-hidden="true"></span>
+                        {% endif %}
+                        {{ tab.label }}
+                        {% if tab.count is not null %}
+                            <span class="badge rounded-pill {{ tab.active ? 'bg-primary text-primary-fg' : 'bg-body-secondary text-body-secondary' }}">{{ tab.count|number_format }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+{% endif %}

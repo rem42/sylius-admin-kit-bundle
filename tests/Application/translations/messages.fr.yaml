@@ -1,0 +1,28 @@
+app:
+    ui:
+        book: Livre
+        books: Livres
+        new_book: Nouveau livre
+        library: Bibliothèque
+        title: Titre
+        title_help: Le titre tel qu'imprimé sur la couverture.
+        author: Auteur
+        choose_author: Choisir un auteur
+        author_name: Nom de l'auteur
+        category: Catégorie
+        choose_category: Choisir une catégorie
+        summary: Résumé
+        available: Disponible
+        created_at: Ajouté le
+        section: Section
+        submenu: Sous-menu
+        section_1: Section 1
+        item_1: Élément 1
+
+# Libellés des cas de BookCategory (onglets du filtre rapide)
+fiction: Fiction
+mystery: Mystère
+science-fiction: Science-fiction
+fantasy: Fantasy
+history: Histoire
+technology: Technologie

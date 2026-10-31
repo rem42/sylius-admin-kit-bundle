@@ -1,0 +1,12 @@
+/vendor/
+/composer.lock
+/.phpunit.cache/
+/.php-cs-fixer.cache
+/.twig-cs-fixer.cache
+/.idea/
+/.claude/settings.local.json
+/.superpowers/
+/tests/Application/var/
+/tests/Application/public/bundles/
+/tests/Application/public/assets/
+/tests/Application/assets/vendor/

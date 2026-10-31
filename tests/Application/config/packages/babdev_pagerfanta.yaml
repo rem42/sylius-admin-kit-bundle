@@ -1,0 +1,22 @@
+# The Twig integration of BabDevPagerfantaBundle (pagerfanta() function, used by the bootstrap theme), declared
+# by the demo: the bundle only registers it when pagerfanta/twig is a "require" dependency, while in this repository
+# it only comes with "require-dev" packages. A real application gets it from sylius/bootstrap-admin-ui.
+services:
+    pagerfanta.twig_extension:
+        class: Pagerfanta\Twig\Extension\PagerfantaExtension
+        tags: ['twig.extension']
+
+    pagerfanta.twig_runtime:
+        class: Pagerfanta\Twig\Extension\PagerfantaRuntime
+        arguments:
+            - 'default'
+            - '@pagerfanta.view_factory'
+            - '@Pagerfanta\RouteGenerator\PositionRouteGeneratorFactoryInterface'
+            - null
+            - '@pagerfanta.cursor_encoder'
+        tags: ['twig.runtime']
+
+    pagerfanta.view.twig:
+        class: Pagerfanta\Twig\View\TwigView
+        arguments: ['@twig', '@@BabDevPagerfanta/default.html.twig']
+        tags: [{ name: 'pagerfanta.view', alias: 'twig' }]

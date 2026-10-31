@@ -1,0 +1,8 @@
+###> symfony/framework-bundle ###
+/var/
+###< symfony/framework-bundle ###
+
+###> symfony/asset-mapper ###
+/assets/vendor/
+/public/assets/
+###< symfony/asset-mapper ###

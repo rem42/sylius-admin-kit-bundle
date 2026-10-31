@@ -1,0 +1,7 @@
+@import "tailwindcss";
+/* Theme of rem42/shadcn-admin-ui (it scans its own templates). */
+@import "../../../../vendor/rem42/shadcn-admin-ui/assets/styles/theme.css";
+
+/* Templates of the demo and shadcn templates of the kit. */
+@source "../../templates";
+@source "../../../../templates/shadcn";

@@ -1,0 +1,8 @@
+# Symfony UX Autocomplete (Ajax entity fields) and Live Components.
+ux_autocomplete:
+    resource: '@AutocompleteBundle/config/routes.php'
+    prefix: /autocomplete
+
+live_component:
+    resource: '@LiveComponentBundle/config/routes.php'
+    prefix: /_components

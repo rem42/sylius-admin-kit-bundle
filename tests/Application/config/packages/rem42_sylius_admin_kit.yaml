@@ -1,0 +1,9 @@
+rem42_sylius_admin_kit:
+    quick_filter:
+        enabled: true
+    active_filters:
+        enabled: true
+    environment:
+        enabled: true
+    entity_filter_autocomplete:
+        enabled: true

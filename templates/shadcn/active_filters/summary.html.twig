@@ -1,0 +1,29 @@
+{# Active filters, each removable, below the trigger of the filters panel of shadcn-admin-ui ("filters#summary" hook): visible when the panel is collapsed. #}
+{% set active_filters = rem42_admin_kit_active_filters(hookable_metadata.context.resources.definition|default(null)) %}
+{% if active_filters %}
+    {% set title = 'rem42_sylius_admin_kit.ui.active_filters.title'|trans %}
+    <div data-admin-kit="active-filters" role="group" aria-label="{{ title }}" class="flex flex-wrap items-center gap-2 border-t px-4 py-2.5">
+        <span class="inline-flex items-center gap-1 text-xs text-muted-foreground">
+            <twig:ux:icon name="lucide:filter" class="size-3.5" aria-hidden="true" />
+            {{ title }}
+        </span>
+        <ul class="contents">
+            {% for filter in active_filters.filters %}
+                {% set remove = 'rem42_sylius_admin_kit.ui.active_filters.remove'|trans({'%label%': filter.label, '%value%': filter.value}) %}
+                <li data-admin-kit-filter="{{ filter.name }}" class="inline-flex max-w-full items-center gap-1 rounded-md border bg-muted/50 py-0.5 ps-2 pe-0.5 text-xs">
+                    <span class="shrink-0 font-medium">{{ 'rem42_sylius_admin_kit.ui.active_filters.label'|trans({'%label%': filter.label}) }}</span>
+                    <span class="truncate" title="{{ filter.value }}">{{ filter.value }}</span>
+                    <a href="{{ filter.remove_url }}" title="{{ remove }}"
+                       class="inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+                        <twig:ux:icon name="lucide:x" class="size-3" aria-hidden="true" />
+                        <span class="sr-only">{{ remove }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{{ active_filters.clear_url }}" class="ms-auto inline-flex items-center gap-1 rounded-sm text-xs text-muted-foreground outline-none hover:text-foreground hover:underline focus-visible:ring-3 focus-visible:ring-ring/50">
+            <twig:ux:icon name="lucide:rotate-ccw" class="size-3.5" aria-hidden="true" />
+            {{ 'rem42_sylius_admin_kit.ui.active_filters.clear'|trans }}
+        </a>
+    </div>
+{% endif %}

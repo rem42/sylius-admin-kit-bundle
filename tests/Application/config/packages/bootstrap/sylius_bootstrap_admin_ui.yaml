@@ -1,0 +1,5 @@
+# Theme sylius/bootstrap-admin-ui (Tabler): hooks, grid templates, icons. Its assets are served from
+# public/bundles/syliusbootstrapadminui/ (php tests/Application/bin/console assets:install tests/Application/public).
+# Loaded before sylius_twig_hooks.yaml (alphabetical order): the hooks of the application win.
+imports:
+    - { resource: '@SyliusBootstrapAdminUiBundle/config/app.php' }

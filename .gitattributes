@@ -1,0 +1,14 @@
+/tests export-ignore
+/docs export-ignore
+/.github export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/Dockerfile export-ignore
+/docker-compose.yml export-ignore
+/entrypoint.sh export-ignore
+/nginx.conf export-ignore
+/Makefile export-ignore
+/phpstan.neon.dist export-ignore
+/phpunit.xml.dist export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/.twig-cs-fixer.dist.php export-ignore

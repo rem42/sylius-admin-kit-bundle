@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use App\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+
+set_time_limit(0);
+
+require dirname(__DIR__, 3) . '/vendor/autoload.php';
+
+$input = new ArgvInput();
+$env = $input->getParameterOption(['--env', '-e'], $_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? 'dev', true);
+$debug = !$input->hasParameterOption('--no-debug', true) && 'prod' !== $env;
+// Theme of the kernel (see App\Kernel::THEMES), e.g. APP_THEME=shadcn php tests/Application/bin/console importmap:install
+$theme = $_SERVER['APP_THEME'] ?? $_ENV['APP_THEME'] ?? Kernel::DEFAULT_THEME;
+
+(new Application(new Kernel($env, $debug, $theme)))->run($input);

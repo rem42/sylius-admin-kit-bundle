@@ -1,0 +1,5 @@
+framework:
+    # The theme ships precompiled assets, served from public/bundles/ (assets:install): asset() must not go
+    # through the AssetMapper, which would serve them from /assets/ instead.
+    asset_mapper:
+        enabled: false

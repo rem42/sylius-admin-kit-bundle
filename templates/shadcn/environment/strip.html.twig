@@ -1,0 +1,9 @@
+{# Coloured strip on top of every admin page, self-contained: no dependency on the theme CSS. #}
+{% set environment = rem42_admin_kit_environment() %}
+{% if environment %}
+    <style data-admin-kit="environment-strip">
+        :root { --admin-kit-env: {{ environment.color }}; --admin-kit-env-foreground: {{ environment.foreground }}; }
+        body::before { content: ""; position: fixed; inset-inline: 0; top: 0; z-index: 1100; height: 4px; background: var(--admin-kit-env); pointer-events: none; }
+        @media print { body::before { display: none; } }
+    </style>
+{% endif %}

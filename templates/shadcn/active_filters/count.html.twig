@@ -1,0 +1,7 @@
+{# Number of active filters, in the trigger of the filters panel of shadcn-admin-ui ("filters#trigger" hook). #}
+{% set active_filters = rem42_admin_kit_active_filters(hookable_metadata.context.resources.definition|default(null)) %}
+{% if active_filters %}
+    <span data-admin-kit="active-filters-count" class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-medium text-primary-foreground tabular-nums">
+        {{ active_filters.filters|length }}<span class="sr-only"> {{ 'rem42_sylius_admin_kit.ui.active_filters.title'|trans }}</span>
+    </span>
+{% endif %}

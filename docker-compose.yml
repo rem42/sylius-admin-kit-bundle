@@ -1,0 +1,12 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/srv/app:rw
+    environment:
+      APP_ENV: dev
+      APP_DEBUG: 1
+    ports:
+      - "8080:80"

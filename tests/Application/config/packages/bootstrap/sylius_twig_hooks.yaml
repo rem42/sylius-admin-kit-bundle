@@ -1,0 +1,9 @@
+# Customization of the bootstrap theme by the demo (its logos are images, not configurable).
+# Hook names are the Sylius Stack ones: php tests/Application/bin/console sylius:debug:twig-hooks
+sylius_twig_hooks:
+    hooks:
+        # Title of the browser tab
+        'sylius_admin.base#base_title':
+            default:
+                configuration:
+                    title: 'Bibliothèque'

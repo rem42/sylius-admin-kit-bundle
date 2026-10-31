@@ -1,0 +1,5 @@
+# @see https://stack.sylius.com/resource/index
+sylius_resource:
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Entity'

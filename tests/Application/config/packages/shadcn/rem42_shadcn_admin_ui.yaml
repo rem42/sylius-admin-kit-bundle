@@ -1,0 +1,8 @@
+# Theme rem42/shadcn-admin-ui: hooks, grid templates, component prefixes.
+# Loaded before sylius_twig_hooks.yaml (alphabetical order): the hooks of the application win.
+imports:
+    - { resource: '@Rem42ShadcnAdminUiBundle/config/app.php' }
+
+rem42_shadcn_admin_ui:
+    sidebar:
+        variant: floating

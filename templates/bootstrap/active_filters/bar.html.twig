@@ -1,0 +1,18 @@
+{# Criteria that filter the grid, each with a link removing it, and a link removing them all. #}
+{% set active_filters = rem42_admin_kit_active_filters(hookable_metadata.context.resources.definition|default(null)) %}
+{% if active_filters %}
+    {% set title = 'rem42_sylius_admin_kit.ui.active_filters.title'|trans %}
+    <div data-admin-kit="active-filters" role="group" aria-label="{{ title }}" class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <span class="text-secondary small">{{ title }}</span>
+        <ul class="tags-list list-unstyled m-0">
+            {% for filter in active_filters.filters %}
+                {% set remove = 'rem42_sylius_admin_kit.ui.active_filters.remove'|trans({'%label%': filter.label, '%value%': filter.value}) %}
+                <li data-admin-kit-filter="{{ filter.name }}" class="tag">
+                    <strong class="me-1">{{ filter.label }}</strong>{{ filter.value }}
+                    <a href="{{ filter.remove_url }}" class="btn-close" title="{{ remove }}" aria-label="{{ remove }}"></a>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{{ active_filters.clear_url }}" class="ms-auto small">{{ 'rem42_sylius_admin_kit.ui.active_filters.clear'|trans }}</a>
+    </div>
+{% endif %}

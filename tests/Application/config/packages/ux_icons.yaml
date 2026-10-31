@@ -1,0 +1,18 @@
+# Full configuration reference: https://symfony.com/bundles/ux-icons/current/index.html#configuration
+# Icons are locked in assets/icons/: lucide:* for the shadcn theme, tabler:* for the bootstrap one.
+ux_icons:
+    # Throw an exception if an icon is not found
+    ignore_not_found: false
+
+when@dev:
+    ux_icons:
+        iconify:
+            # Persist each on-demand icon to disk on first render, so you don't forget to commit it (like `ux:icons:lock`)
+            auto_lock: true
+
+when@test:
+    ux_icons:
+        # No call to the Iconify API from the tests, and no failure on an icon that is not locked.
+        iconify:
+            enabled: false
+        ignore_not_found: true

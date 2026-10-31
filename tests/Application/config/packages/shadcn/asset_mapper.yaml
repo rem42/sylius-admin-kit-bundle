@@ -1,0 +1,23 @@
+imports:
+    # TwigBundle only registers the importmap() function when symfony/asset-mapper is a "require" dependency:
+    # in this repository it is a "require-dev" one.
+    - { resource: '@TwigBundle/Resources/config/importmap.php' }
+
+framework:
+    # importmap:install downloads the packages with the HttpClient ("require-dev" dependency here too).
+    http_client:
+        enabled: true
+
+    asset_mapper:
+        # The paths to make available to the asset mapper.
+        paths:
+            - assets/
+        missing_import_mode: strict
+        # Served by the shadcn kernel, mounted on /shadcn (see public/index.php).
+        public_prefix: /shadcn/assets/
+
+when@test:
+    framework:
+        asset_mapper:
+            # Tests render the pages without building the Tailwind stylesheet: its source imports "tailwindcss".
+            missing_import_mode: warn

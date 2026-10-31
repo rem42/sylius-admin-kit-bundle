@@ -1,0 +1,22 @@
+{# Badge of the environment indicator, coloured by its own custom properties (placement: navbar or login). #}
+{% set environment = rem42_admin_kit_environment() %}
+{% if environment %}
+    {% set title = 'rem42_sylius_admin_kit.ui.environment'|trans({'%label%': environment.label}) %}
+    {% set badge %}
+        <span
+            data-admin-kit="environment-badge"
+            class="badge d-inline-flex align-items-center gap-1 fw-semibold d-print-none"
+            style="--admin-kit-env: {{ environment.color }}; --admin-kit-env-foreground: {{ environment.foreground }}; background: var(--admin-kit-env); color: var(--admin-kit-env-foreground)"
+            title="{{ title }}"
+        >
+            {{ ux_icon('tabler:server', {class: 'icon'}) }}
+            <span class="visually-hidden">{{ title }}</span>
+            <span aria-hidden="true">{{ environment.label }}</span>
+        </span>
+    {% endset %}
+    {% if (hookable_metadata.configuration.placement|default('navbar')) == 'login' %}
+        <div class="text-center mb-3">{{ badge }}</div>
+    {% else %}
+        {{ badge }}
+    {% endif %}
+{% endif %}

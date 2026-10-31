@@ -1,0 +1,28 @@
+app:
+    ui:
+        book: Book
+        books: Books
+        new_book: New book
+        library: Library
+        title: Title
+        title_help: The title as printed on the cover.
+        author: Author
+        choose_author: Choose an author
+        author_name: Author name
+        category: Category
+        choose_category: Choose a category
+        summary: Summary
+        available: Available
+        created_at: Created at
+        section: Section
+        submenu: Submenu
+        section_1: Section 1
+        item_1: Item 1
+
+# Labels of the BookCategory cases (quick filter tabs)
+fiction: Fiction
+mystery: Mystery
+science-fiction: Science fiction
+fantasy: Fantasy
+history: History
+technology: Technology

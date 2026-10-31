@@ -1,0 +1,90 @@
+name: CI
+
+on:
+    push:
+        branches: [main, master]
+    pull_request: ~
+    workflow_dispatch: ~
+
+jobs:
+    coding-standards:
+        runs-on: ubuntu-latest
+        name: "Coding standards (PHP 8.4)"
+        steps:
+            -
+                uses: actions/checkout@v7
+
+            -
+                name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: "8.4"
+                    coverage: none
+
+            -
+                name: Validate composer.json
+                run: composer validate --strict
+
+            -
+                name: Install dependencies
+                uses: ramsey/composer-install@v4
+
+            -
+                name: PHP CS Fixer
+                run: vendor/bin/php-cs-fixer check --diff
+
+            -
+                name: Twig CS Fixer
+                run: vendor/bin/twig-cs-fixer lint
+
+            -
+                name: PHPStan
+                run: vendor/bin/phpstan analyse --memory-limit=-1
+
+    tests:
+        runs-on: ubuntu-latest
+        name: "PHPUnit (PHP ${{ matrix.php }}, Symfony ${{ matrix.symfony }})"
+        strategy:
+            fail-fast: false
+            matrix:
+                php: ["8.4", "8.5"]
+                symfony: ["7.4.*", "8.1.*"]
+        steps:
+            -
+                uses: actions/checkout@v7
+
+            -
+                name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: "${{ matrix.php }}"
+                    extensions: pdo_sqlite
+                    coverage: none
+                    tools: "composer:v2, flex"
+
+            -
+                name: Restrict Symfony version
+                run: composer config extra.symfony.require "${{ matrix.symfony }}"
+
+            -
+                name: Install dependencies
+                uses: ramsey/composer-install@v4
+                with:
+                    composer-options: "--prefer-stable"
+                    custom-cache-suffix: "symfony-${{ matrix.symfony }}"
+
+            -
+                name: Cache importmap vendors
+                uses: actions/cache@v6
+                with:
+                    path: tests/Application/assets/vendor
+                    key: importmap-${{ hashFiles('tests/Application/importmap.php') }}
+
+            # The demo pages fail to render without the importmap vendors of the shadcn theme
+            -
+                name: Install the demo importmap
+                run: APP_THEME=shadcn php tests/Application/bin/console importmap:install
+
+            -
+                name: Run tests
+                run: vendor/bin/phpunit

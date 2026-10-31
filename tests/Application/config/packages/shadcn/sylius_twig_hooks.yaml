@@ -1,0 +1,24 @@
+# Customization of the shadcn theme by the demo.
+# Hook names are the Sylius Stack ones: APP_THEME=shadcn php tests/Application/bin/console sylius:debug:twig-hooks
+sylius_twig_hooks:
+    hooks:
+        # Title of the browser tab
+        'sylius_admin.base#base_title':
+            default:
+                configuration:
+                    title: 'Bibliothèque'
+
+        # Sidebar logo
+        'sylius_admin.common.component.sidebar.logo':
+            image:
+                configuration:
+                    name: 'Bibliothèque'
+                    subtitle: 'Démo Sylius Stack'
+                    icon: 'lucide:library'
+
+        # Login page logo
+        'sylius_admin.security.login.page.logo':
+            image:
+                configuration:
+                    name: 'Bibliothèque'
+                    icon: 'lucide:library'

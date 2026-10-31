@@ -1,0 +1,91 @@
+{
+    "name": "rem42/sylius-admin-kit-bundle",
+    "description": "Opt-in admin features (quick filter, active filters, environment indicator, entity filter autocomplete) for Sylius Stack admin UIs, with shadcn and bootstrap (Tabler) themes.",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rem42",
+            "homepage": "https://github.com/rem42"
+        }
+    ],
+    "keywords": [
+        "sylius",
+        "sylius-stack",
+        "admin",
+        "symfony-bundle"
+    ],
+    "require": {
+        "php": "^8.4",
+        "sylius/admin-ui": "^0.14",
+        "sylius/grid-bundle": "^1.16",
+        "sylius/twig-hooks": "^0.14",
+        "symfony/config": "^7.4 || ^8.0",
+        "symfony/dependency-injection": "^7.4 || ^8.0",
+        "symfony/http-foundation": "^7.4 || ^8.0",
+        "symfony/http-kernel": "^7.4 || ^8.0",
+        "symfony/property-access": "^7.4 || ^8.0",
+        "symfony/routing": "^7.4 || ^8.0",
+        "symfony/translation-contracts": "^3",
+        "symfony/ux-icons": "^2.20 || ^3.0",
+        "twig/twig": "^3.12"
+    },
+    "require-dev": {
+        "doctrine/doctrine-bundle": "^2.13 || ^3.0",
+        "doctrine/orm": "^3.4",
+        "pagerfanta/doctrine-orm-adapter": "^4.6",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-doctrine": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "phpunit/phpunit": "^11.5",
+        "rem42/php-cs-fixer-config": "^4.1",
+        "rem42/shadcn-admin-ui": "^1.0",
+        "sylius/bootstrap-admin-ui": "^0.14",
+        "sylius/ui-translations": "^0.14",
+        "symfony/asset-mapper": "^7.4 || ^8.0",
+        "symfony/browser-kit": "^7.4 || ^8.0",
+        "symfony/console": "^7.4 || ^8.0",
+        "symfony/css-selector": "^7.4 || ^8.0",
+        "symfony/http-client": "^7.4 || ^8.0",
+        "symfony/translation": "^7.4 || ^8.0",
+        "symfony/twig-bundle": "^7.4 || ^8.0",
+        "symfony/ux-autocomplete": "^2.17 || ^3.0",
+        "symfony/ux-live-component": "^2.17 || ^3.0",
+        "symfony/ux-toolkit": "^3.6",
+        "symfony/validator": "^7.4 || ^8.0",
+        "symfony/yaml": "^7.4 || ^8.0",
+        "symfonycasts/tailwind-bundle": "^1.0",
+        "vincentlanglet/twig-cs-fixer": "^4.1"
+    },
+    "suggest": {
+        "doctrine/persistence": "For the labels of the entity criteria of the active filters (their id otherwise)",
+        "rem42/shadcn-admin-ui": "For the shadcn theme",
+        "sylius/bootstrap-admin-ui": "For the bootstrap (Tabler) theme",
+        "symfony/ux-autocomplete": "For the entity filter autocomplete"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rem42\\SyliusAdminKit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\": "tests/Application/src/",
+            "Tests\\Rem42\\SyliusAdminKit\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "test": "@php vendor/bin/phpunit",
+        "analyse": "@php vendor/bin/phpstan analyse --memory-limit=-1"
+    }
+}

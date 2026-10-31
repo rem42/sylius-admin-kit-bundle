@@ -1,0 +1,12 @@
+rem42_sylius_admin_kit:
+    ui:
+        environment: 'Environnement : %label%'
+        active_filters:
+            title: 'Filtres actifs'
+            label: '%label% :'
+            remove: 'Retirer le filtre %label% : %value%'
+            clear: 'Tout effacer'
+            range:
+                between: 'Du %from% au %to%'
+                from: 'À partir du %from%'
+                to: 'Jusqu''au %to%'

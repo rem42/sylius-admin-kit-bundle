@@ -1,0 +1,15 @@
+{# Badge of the environment indicator, coloured by its own custom properties (placement: navbar or login). #}
+{% set environment = rem42_admin_kit_environment() %}
+{% if environment %}
+    {% set title = 'rem42_sylius_admin_kit.ui.environment'|trans({'%label%': environment.label}) %}
+    <span
+        data-admin-kit="environment-badge"
+        class="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-(--admin-kit-env) px-2 py-0.5 text-xs font-semibold tracking-wide text-(--admin-kit-env-foreground) print:hidden{{ (hookable_metadata.configuration.placement|default('navbar')) == 'login' ? ' self-center' : '' }}"
+        style="--admin-kit-env: {{ environment.color }}; --admin-kit-env-foreground: {{ environment.foreground }}"
+        title="{{ title }}"
+    >
+        <twig:ux:icon name="lucide:server" class="size-3.5" aria-hidden="true" />
+        <span class="sr-only">{{ title }}</span>
+        <span aria-hidden="true">{{ environment.label }}</span>
+    </span>
+{% endif %}

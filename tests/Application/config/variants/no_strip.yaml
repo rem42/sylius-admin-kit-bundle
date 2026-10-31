@@ -1,0 +1,5 @@
+# Variant "no_strip": the environment indicator without its strip. Tests boot it with
+# AdminKitWebTestCase::bootClient($theme, 'no_strip') to check that the badge keeps its colours on its own.
+rem42_sylius_admin_kit:
+    environment:
+        strip: false
