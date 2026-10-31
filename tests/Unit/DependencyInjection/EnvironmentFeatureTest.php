@@ -13,7 +13,7 @@ final class EnvironmentFeatureTest extends BundleTestCase
 
     private const STYLESHEETS = 'sylius_admin.base#stylesheets';
 
-    private const NAVBAR = 'sylius_admin.common.component.navbar.items';
+    private const NAVBAR = 'sylius_admin.common.component.navbar.menu';
 
     private const LOGIN = 'sylius_admin.security.login.page';
 
