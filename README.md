@@ -55,6 +55,35 @@ see [Installation](docs/installation.md).
 * [Entity filter autocomplete](docs/entity-filter-autocomplete.md)
 * [Themes](docs/themes.md) (built-in and custom themes, file contract)
 
+## Screenshots
+### Bootstrap theme
+
+<a href="docs/screenshots/bootstrap_env.png" target="_blank">
+    <img width="30%" src="docs/screenshots/bootstrap_env.png" alt="Bootstrap screenshot">
+</a>
+
+<a href="docs/screenshots/bootstrap_active_filters.png" target="_blank">
+    <img width="30%" src="docs/screenshots/bootstrap_active_filters.png" alt="Bootstrap screenshot">
+</a>
+
+<a href="docs/screenshots/bootstrap_quick_filters.png" target="_blank">
+    <img width="30%" src="docs/screenshots/bootstrap_quick_filters.png" alt="Bootstrap screenshot">
+</a>
+
+### Shadcn theme
+
+<a href="docs/screenshots/shadcn_env.png" target="_blank">
+    <img width="30%" src="docs/screenshots/shadcn_env.png" alt="Shadcn screenshot">
+</a>
+
+<a href="docs/screenshots/shadcn_active_filters.png" target="_blank">
+    <img width="30%" src="docs/screenshots/shadcn_active_filters.png" alt="Shadcn screenshot">
+</a>
+
+<a href="docs/screenshots/shadcn_quick_filters.png" target="_blank">
+    <img width="30%" src="docs/screenshots/shadcn_quick_filters.png" alt="Shadcn screenshot">
+</a>
+
 ## Development
 
 ```bash
