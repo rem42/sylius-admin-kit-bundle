@@ -65,13 +65,6 @@ make ci        # php-cs-fixer + twig-cs-fixer + PHPStan (level max) + PHPUnit
 make install   # composer install
 ```
 
-The shadcn theme comes from a checkout of the `kit-compat` branch of the kit, which must sit next to this repository
-(composer path repository, mounted in the Docker container) until shadcn-admin-ui 2 is released:
-
-```bash
-git clone -b kit-compat https://github.com/rem42/shadcn-admin-ui ../shadcn-admin-ui-kit-compat
-```
-
 The demo application lives in `tests/Application`. Each theme runs in its own kernel (`App\Kernel`): bundles flagged
 with its name in `config/bundles.php`, configuration of `config/packages/{theme}/`. The shadcn theme needs its assets:
 `make assets`, or `APP_THEME=shadcn php tests/Application/bin/console importmap:install` (the Docker entrypoint does
