@@ -59,6 +59,10 @@ class Book implements ResourceInterface
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $summary = null;
 
+    /** @var list<string> */
+    #[ORM\Column(type: 'json')]
+    private array $tags = [];
+
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
@@ -136,6 +140,22 @@ class Book implements ResourceInterface
     public function setSummary(?string $summary): void
     {
         $this->summary = $summary;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param list<string> $tags
+     */
+    public function setTags(array $tags): void
+    {
+        $this->tags = $tags;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

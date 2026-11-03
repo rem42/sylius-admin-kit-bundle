@@ -10,3 +10,7 @@ rem42_sylius_admin_kit:
                 between: 'Du %from% au %to%'
                 from: 'À partir du %from%'
                 to: 'Jusqu''au %to%'
+        tags:
+            placeholder: 'Ajouter…'
+            remove: 'Retirer %tag%'
+            invalid: '« %tag% » n''est pas valide.'

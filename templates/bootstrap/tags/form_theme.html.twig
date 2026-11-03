@@ -1,0 +1,52 @@
+{#- Form theme of TagsType (Stimulus controller "admin-kit--tags"), styled with the Tabler tags of the bootstrap admin.
+    The hidden input carries the submitted value (JSON list); the text input only types the next tag. -#}
+
+{%- block rem42_admin_kit_tags_widget -%}
+    {%- set controller = 'admin-kit--tags' -%}
+    {%- set invalid = attr['aria-invalid']|default(false) -%}
+    <div
+        data-admin-kit="tags"
+        class="form-control d-flex flex-wrap align-items-center gap-1 h-auto py-1{{ invalid ? ' is-invalid' }}"
+        data-controller="{{ controller }}"
+        data-action="click->{{ controller }}#focus"
+        data-{{ controller }}-split-pattern-value="{{ split_pattern }}"
+        {%- if tag_pattern is not null %} data-{{ controller }}-tag-pattern-value="{{ tag_pattern }}"{% endif %}
+        data-{{ controller }}-unique-value="{{ unique ? 'true' : 'false' }}"
+        data-{{ controller }}-hidden-class="d-none"
+        data-{{ controller }}-invalid-class="is-invalid"
+        data-{{ controller }}-remove-label-value="{{ 'rem42_sylius_admin_kit.ui.tags.remove'|trans({'%tag%': '%tag%'}) }}"
+        data-{{ controller }}-invalid-message-value="{{ 'rem42_sylius_admin_kit.ui.tags.invalid'|trans({'%tag%': '%tag%'}) }}"
+    >
+        <input type="hidden" name="{{ full_name }}" value="{{ value }}" data-{{ controller }}-target="value">
+        <ul class="tags-list list-unstyled m-0" aria-label="{{ label is not same as(false) ? (label ?? name|humanize)|trans(label_translation_parameters, translation_domain) : name }}" data-{{ controller }}-target="list">
+            {%- for tag in tags -%}
+                {{- block('rem42_admin_kit_tags_tag') -}}
+            {%- endfor -%}
+        </ul>
+        <input
+            type="{{ input_type }}"
+            id="{{ id }}"
+            data-admin-kit-tags-entry
+            autocomplete="off"
+            {%- if entry_placeholder is not null %} placeholder="{{ entry_placeholder|trans({}, translation_domain) }}"{% endif %}
+            {%- if disabled %} disabled{% endif %}
+            {%- with {attr: attr|filter((v, k) => k starts with 'aria-')} %}{{ block('attributes') }}{% endwith %}
+            class="border-0 bg-transparent flex-grow-1 px-1 py-0 shadow-none"
+            style="outline: none; min-width: 10rem;"
+            data-{{ controller }}-target="entry"
+            data-action="keydown->{{ controller }}#keydown paste->{{ controller }}#paste blur->{{ controller }}#commit input->{{ controller }}#clearError"
+        >
+        <template data-{{ controller }}-target="template">
+            {%- with {tag: ''} %}{{ block('rem42_admin_kit_tags_tag') }}{% endwith -%}
+        </template>
+    </div>
+    <div class="invalid-feedback d-block d-none" aria-live="polite" data-{{ controller }}-target="error"></div>
+{%- endblock rem42_admin_kit_tags_widget -%}
+
+{%- block rem42_admin_kit_tags_tag -%}
+    {%- set remove = 'rem42_sylius_admin_kit.ui.tags.remove'|trans({'%tag%': tag}) -%}
+    <li class="tag" data-admin-kit--tags-target="tag" data-admin-kit-tag="{{ tag }}">
+        <span data-admin-kit-tag-label>{{ tag }}</span>
+        <button type="button" class="btn-close" title="{{ remove }}" aria-label="{{ remove }}"{% if disabled|default(false) %} disabled{% endif %} data-action="admin-kit--tags#remove"></button>
+    </li>
+{%- endblock rem42_admin_kit_tags_tag -%}

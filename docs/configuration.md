@@ -34,6 +34,9 @@ rem42_sylius_admin_kit:
 
     entity_filter_autocomplete:
         enabled: false
+
+    tags:
+        enabled: false
 ```
 
 ## Rules
@@ -49,6 +52,11 @@ rem42_sylius_admin_kit:
 * `entity_filter_autocomplete.enabled: true` without the `AutocompleteBundle` of `symfony/ux-autocomplete` fails at
   container compilation: `The "entity_filter_autocomplete" feature of rem42_sylius_admin_kit requires
   symfony/ux-autocomplete: install it and enable its AutocompleteBundle.`
+* `tags.enabled: true` without the `StimulusBundle` of `symfony/stimulus-bundle` fails at container compilation:
+  `The "tags" feature of rem42_sylius_admin_kit requires symfony/stimulus-bundle: install it and enable its
+  StimulusBundle.`
+* `tags` prepends its form theme to `twig.form_themes`: a form theme of your application that defines
+  `rem42_admin_kit_tags_widget` comes after it and wins.
 
 ## Overriding or disabling a hookable
 

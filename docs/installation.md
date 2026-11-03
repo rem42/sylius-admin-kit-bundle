@@ -8,6 +8,7 @@
   theme (see [Themes](themes.md))
 * `symfony/ux-icons` (required by the package, used by the templates)
 * `symfony/ux-autocomplete` for the [entity filter autocomplete](entity-filter-autocomplete.md) only
+* `symfony/stimulus-bundle` for the [tags](tags.md) only
 
 ## Install
 
@@ -37,6 +38,8 @@ rem42_sylius_admin_kit:
     environment:
         enabled: true
     entity_filter_autocomplete:
+        enabled: true
+    tags:
         enabled: true
 ```
 
@@ -71,3 +74,8 @@ The Tom Select rendering is provided by the admin UI, not by the kit. Install `s
 `AutocompleteBundle`, and follow the installation documentation of your admin UI (Stimulus controllers, importmap
 and styles) so that the `autocomplete` form option of `entity` filters is rendered. Details in
 [Entity filter autocomplete](entity-filter-autocomplete.md).
+
+## Tags
+
+The Stimulus controller of the tags is loaded through the AssetMapper with no extra step. With Webpack Encore, or the
+AssetMapper disabled, register it yourself, see [Tags](tags.md#how-it-works).

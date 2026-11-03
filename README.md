@@ -10,6 +10,7 @@ Opt-in admin features for [Sylius Stack](https://stack.sylius.com) admin UIs, th
 | [Active filters](docs/active-filters.md) | Removable chips listing the criteria that filter a grid, visible even when the filters are collapsed. |
 | [Environment indicator](docs/environment.md) | Coloured strip on every admin page, badge in the navbar and on the login page. |
 | [Entity filter autocomplete](docs/entity-filter-autocomplete.md) | `entity` grid filters become searchable Tom Select comboboxes. |
+| [Tags](docs/tags.md) | `TagsType`: a list of strings typed as removable tags (emails, keywords…). |
 
 Everything is disabled by default: installing the bundle changes nothing until you enable a feature. A disabled
 feature registers no service, no Twig function and no hook.
@@ -39,6 +40,8 @@ rem42_sylius_admin_kit:
         enabled: true
     entity_filter_autocomplete:
         enabled: true
+    tags:
+        enabled: true
 ```
 
 The theme is detected (`shadcn` when `Rem42ShadcnAdminUiBundle` is loaded, `bootstrap` otherwise) and can be forced
@@ -53,6 +56,7 @@ see [Installation](docs/installation.md).
 * [Active filters](docs/active-filters.md)
 * [Environment indicator](docs/environment.md)
 * [Entity filter autocomplete](docs/entity-filter-autocomplete.md)
+* [Tags](docs/tags.md)
 * [Themes](docs/themes.md) (built-in and custom themes, file contract)
 
 ## Screenshots

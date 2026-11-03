@@ -34,6 +34,12 @@ final class LoadBooksCommand
         ['Les Trois Mousquetaires', 'Alexandre Dumas', BookCategory::FICTION, false, null],
     ];
 
+    /** @var array<string, list<string>> tags of some books (TagsType) */
+    private const TAGS = [
+        'Dune' => ['classic', 'desert', 'saga'],
+        'Clean Code' => ['craft', 'refactoring'],
+    ];
+
     public function __construct(
         private readonly EntityManagerInterface $em,
     ) {}
@@ -65,6 +71,7 @@ final class LoadBooksCommand
             $book->setCategory($category);
             $book->setAvailable($available);
             $book->setSummary($summary);
+            $book->setTags(self::TAGS[$title] ?? []);
             $book->setCreatedAt(new \DateTimeImmutable(\sprintf('-%d days', $i * 3)));
             $this->em->persist($book);
         }

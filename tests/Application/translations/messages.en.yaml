@@ -11,6 +11,8 @@ app:
         author_name: Author name
         category: Category
         choose_category: Choose a category
+        tags: Tags
+        tags_help: Enter or a comma adds a tag.
         summary: Summary
         available: Available
         created_at: Created at

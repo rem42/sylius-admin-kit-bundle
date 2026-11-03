@@ -40,10 +40,11 @@ A theme provides the files of the features it supports. A missing file raises th
 | `active_filters/bar.html.twig` | used with any other admin UI; same variables |
 | `environment/strip.html.twig` | none, calls `rem42_admin_kit_environment()` |
 | `environment/badge.html.twig` | `hookable_metadata.configuration.placement` (hookable configuration): `navbar` or `login`, fall back to `navbar` when unset |
+| `tags/form_theme.html.twig` | form theme defining the blocks `rem42_admin_kit_tags_widget` (form vars plus `tags`, `split_pattern`, `tag_pattern`, `unique`, `input_type`, `entry_placeholder`) and `rem42_admin_kit_tags_tag` (`tag`). Must follow the targets, values and classes of the Stimulus controller `admin-kit--tags` (see `assets/controllers/admin_kit/tags_controller.js`) |
 
 Conventions:
 
-* Every root element carries `data-admin-kit="<name>"`: `quick-filter`, `active-filters`, `active-filters-count`, `environment-strip`, `environment-badge`.
+* Every root element carries `data-admin-kit="<name>"`: `quick-filter`, `active-filters`, `active-filters-count`, `environment-strip`, `environment-badge`, `tags`.
 * Use the Twig functions `rem42_admin_kit_quick_filter(grid)`, `rem42_admin_kit_active_filters(grid)` and
   `rem42_admin_kit_environment()`, see [Quick filter](quick-filter.md), [Active filters](active-filters.md) and
   [Environment indicator](environment.md) for what they return.

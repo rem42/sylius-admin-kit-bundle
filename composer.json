@@ -1,6 +1,6 @@
 {
     "name": "rem42/sylius-admin-kit-bundle",
-    "description": "Opt-in admin features (quick filter, active filters, environment indicator, entity filter autocomplete) for Sylius Stack admin UIs, with shadcn and bootstrap (Tabler) themes.",
+    "description": "Opt-in admin features (quick filter, active filters, environment indicator, entity filter autocomplete, tags) for Sylius Stack admin UIs, with shadcn and bootstrap (Tabler) themes.",
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
@@ -63,6 +63,7 @@
         "doctrine/persistence": "For the labels of the entity criteria of the active filters (their id otherwise)",
         "rem42/shadcn-admin-ui": "For the shadcn theme",
         "sylius/bootstrap-admin-ui": "For the bootstrap (Tabler) theme",
+        "symfony/stimulus-bundle": "For the tags (TagsType)",
         "symfony/ux-autocomplete": "For the entity filter autocomplete"
     },
     "autoload": {

@@ -7,6 +7,7 @@ namespace App\Form;
 use App\Entity\Author;
 use App\Entity\Book;
 use App\Enum\BookCategory;
+use Rem42\SyliusAdminKit\Tags\Form\TagsType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -39,6 +40,7 @@ final class BookType extends AbstractType
                 'required' => false,
                 'placeholder' => 'app.ui.choose_category',
             ])
+            ->add('tags', TagsType::class, ['label' => 'app.ui.tags', 'help' => 'app.ui.tags_help'])
             ->add('summary', TextareaType::class, ['label' => 'app.ui.summary', 'required' => false])
             ->add('available', CheckboxType::class, ['label' => 'app.ui.available', 'required' => false])
         ;

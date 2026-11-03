@@ -1,0 +1,62 @@
+{#- Form theme of TagsType (Stimulus controller "admin-kit--tags"), styled like the shadcn Input.
+    The hidden input carries the submitted value (JSON list); the text input only types the next tag.
+    Tags added by the controller are cloned from the <template>, so that Tailwind sees every class here. -#}
+
+{%- block rem42_admin_kit_tags_widget -%}
+    {%- set controller = 'admin-kit--tags' -%}
+    {%- set remove_label = 'rem42_sylius_admin_kit.ui.tags.remove'|trans({'%tag%': '%tag%'}) -%}
+    <div
+        data-admin-kit="tags"
+        class="flex min-h-9 w-full min-w-0 cursor-text flex-wrap items-center gap-1 rounded-lg border border-input bg-transparent p-1 transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-[[data-admin-kit-tags-entry][aria-invalid=true]]:border-destructive has-[[data-admin-kit-tags-entry][aria-invalid=true]]:ring-3 has-[[data-admin-kit-tags-entry][aria-invalid=true]]:ring-destructive/20 has-[[data-admin-kit-tags-entry]:disabled]:cursor-not-allowed has-[[data-admin-kit-tags-entry]:disabled]:opacity-50 dark:bg-input/30 dark:has-[[data-admin-kit-tags-entry][aria-invalid=true]]:ring-destructive/40"
+        data-controller="{{ controller }}"
+        data-action="click->{{ controller }}#focus"
+        data-{{ controller }}-split-pattern-value="{{ split_pattern }}"
+        {%- if tag_pattern is not null %} data-{{ controller }}-tag-pattern-value="{{ tag_pattern }}"{% endif %}
+        data-{{ controller }}-unique-value="{{ unique ? 'true' : 'false' }}"
+        data-{{ controller }}-hidden-class="hidden"
+        data-{{ controller }}-remove-label-value="{{ remove_label }}"
+        data-{{ controller }}-invalid-message-value="{{ 'rem42_sylius_admin_kit.ui.tags.invalid'|trans({'%tag%': '%tag%'}) }}"
+    >
+        <input type="hidden" name="{{ full_name }}" value="{{ value }}" data-{{ controller }}-target="value">
+        <ul class="contents" aria-label="{{ label is not same as(false) ? (label ?? name|humanize)|trans(label_translation_parameters, translation_domain) : name }}" data-{{ controller }}-target="list">
+            {%- for tag in tags -%}
+                {{- block('rem42_admin_kit_tags_tag') -}}
+            {%- endfor -%}
+        </ul>
+        <input
+            type="{{ input_type }}"
+            id="{{ id }}"
+            data-admin-kit-tags-entry
+            autocomplete="off"
+            {%- if entry_placeholder is not null %} placeholder="{{ entry_placeholder|trans({}, translation_domain) }}"{% endif %}
+            {%- if disabled %} disabled{% endif %}
+            {%- with {attr: attr|filter((v, k) => k starts with 'aria-')} %}{{ block('attributes') }}{% endwith %}
+            class="h-7 min-w-40 flex-1 border-0 bg-transparent px-1.5 text-base outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed md:text-sm"
+            data-{{ controller }}-target="entry"
+            data-action="keydown->{{ controller }}#keydown paste->{{ controller }}#paste blur->{{ controller }}#commit input->{{ controller }}#clearError"
+        >
+        <template data-{{ controller }}-target="template">
+            {%- with {tag: ''} %}{{ block('rem42_admin_kit_tags_tag') }}{% endwith -%}
+        </template>
+    </div>
+    <p class="hidden text-sm text-destructive" aria-live="polite" data-{{ controller }}-target="error"></p>
+{%- endblock rem42_admin_kit_tags_widget -%}
+
+{%- block rem42_admin_kit_tags_tag -%}
+    {%- set remove = 'rem42_sylius_admin_kit.ui.tags.remove'|trans({'%tag%': tag}) -%}
+    <li
+        class="inline-flex h-7 max-w-full items-center gap-0.5 rounded-md bg-secondary ps-2 text-xs font-medium text-secondary-foreground aria-invalid:bg-destructive/10 aria-invalid:text-destructive dark:aria-invalid:bg-destructive/20"
+        data-admin-kit--tags-target="tag"
+        data-admin-kit-tag="{{ tag }}"
+    >
+        <span class="truncate" data-admin-kit-tag-label>{{ tag }}</span>
+        <button
+            type="button"
+            title="{{ remove }}"
+            aria-label="{{ remove }}"
+            {%- if disabled|default(false) %} disabled{% endif %}
+            class="inline-flex size-6 shrink-0 items-center justify-center rounded-md text-current outline-none transition-colors hover:bg-foreground/10 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none"
+            data-action="admin-kit--tags#remove"
+        ><twig:ux:icon name="lucide:x" class="size-3" aria-hidden="true" /></button>
+    </li>
+{%- endblock rem42_admin_kit_tags_tag -%}

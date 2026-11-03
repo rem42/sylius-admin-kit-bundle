@@ -7,6 +7,7 @@ namespace Rem42\SyliusAdminKit;
 use Rem42\SyliusAdminKit\Environment\Twig\EnvironmentExtension;
 use Rem42\SyliusAdminKit\QuickFilter\QuickFilterProviderInterface;
 use Rem42\SyliusAdminKit\Theme\ThemeResolver;
+use Symfony\Component\AssetMapper\AssetMapperInterface;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -103,6 +104,13 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
             ->booleanNode('enabled')->defaultFalse()->end()
             ->end()
             ->end()
+            ->arrayNode('tags')
+            ->info('TagsType form type: a list of strings typed as removable tags (Stimulus controller "admin-kit--tags").')
+            ->addDefaultsIfNotSet()
+            ->children()
+            ->booleanNode('enabled')->defaultFalse()->end()
+            ->end()
+            ->end()
             ->end()
         ;
     }
@@ -117,6 +125,10 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
 
         $builder->setParameter('rem42_sylius_admin_kit.theme', $theme->name);
         $builder->setParameter('rem42_sylius_admin_kit.template_prefix', $theme->templatePrefix);
+
+        if ($config['tags']['enabled']) {
+            $this->prependTags($container, $builder, $theme->templatePrefix);
+        }
 
         if (!isset($kernelBundles['SyliusTwigHooksBundle'])) {
             return;
@@ -207,6 +219,32 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
     }
 
     /**
+     * The form theme of the tags widget, and its Stimulus controller next to the application ones (identifier
+     * "admin-kit--tags", from its sub-directory), the way rem42/shadcn-admin-ui exposes its controllers.
+     */
+    private function prependTags(ContainerConfigurator $container, ContainerBuilder $builder, string $templatePrefix): void
+    {
+        /** @var array<string, mixed> $kernelBundles */
+        $kernelBundles = $builder->getParameter('kernel.bundles');
+
+        if (isset($kernelBundles['TwigBundle'])) {
+            $container->extension('twig', ['form_themes' => [$templatePrefix . '/tags/form_theme.html.twig']], prepend: true);
+        }
+
+        // Without StimulusBundle, loadExtension() fails with an explicit message: prepend nothing that could not load.
+        if (!interface_exists(AssetMapperInterface::class) || !isset($kernelBundles['FrameworkBundle'], $kernelBundles['StimulusBundle'])) {
+            return;
+        }
+
+        $container->extension('framework', [
+            'asset_mapper' => ['paths' => [$this->getPath() . '/assets' => '@rem42/sylius-admin-kit']],
+        ], prepend: true);
+        $container->extension('stimulus', [
+            'controller_paths' => ['%kernel.project_dir%/assets/controllers', $this->getPath() . '/assets/controllers'],
+        ], prepend: true);
+    }
+
+    /**
      * @param array<string, mixed> $config
      */
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
@@ -245,6 +283,20 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
             $container->import('../config/services/entity_filter.php');
         }
 
+        /** @var array{enabled: bool} $tags */
+        $tags = $config['tags'];
+
+        if ($tags['enabled']) {
+            /** @var array<string, mixed> $kernelBundles */
+            $kernelBundles = $builder->getParameter('kernel.bundles');
+
+            if (!isset($kernelBundles['StimulusBundle'])) {
+                throw new \LogicException('The "tags" feature of rem42_sylius_admin_kit requires symfony/stimulus-bundle: install it and enable its StimulusBundle.');
+            }
+
+            $container->import('../config/services/tags.php');
+        }
+
         if ($environment['enabled']) {
             $container->import('../config/services/environment.php');
             $container->services()->get('rem42_sylius_admin_kit.twig.extension.environment')
@@ -255,7 +307,7 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
     }
 
     /**
-     * @return array{theme: ?string, themes: array<string, string>, quick_filter: array{enabled: bool}, active_filters: array{enabled: bool}, environment: array{enabled: bool, name: string, environments: array<string, array{label: ?string, color: string, foreground: string}>, strip: bool, navbar: bool, login: bool}}
+     * @return array{theme: ?string, themes: array<string, string>, quick_filter: array{enabled: bool}, active_filters: array{enabled: bool}, environment: array{enabled: bool, name: string, environments: array<string, array{label: ?string, color: string, foreground: string}>, strip: bool, navbar: bool, login: bool}, entity_filter_autocomplete: array{enabled: bool}, tags: array{enabled: bool}}
      */
     private function processConfiguration(ContainerBuilder $builder): array
     {
@@ -274,7 +326,7 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
             throw new \LogicException('The bundle extension must provide a configuration.');
         }
 
-        /** @var array{theme: ?string, themes: array<string, string>, quick_filter: array{enabled: bool}, active_filters: array{enabled: bool}, environment: array{enabled: bool, name: string, environments: array<string, array{label: ?string, color: string, foreground: string}>, strip: bool, navbar: bool, login: bool}} */
+        /** @var array{theme: ?string, themes: array<string, string>, quick_filter: array{enabled: bool}, active_filters: array{enabled: bool}, environment: array{enabled: bool, name: string, environments: array<string, array{label: ?string, color: string, foreground: string}>, strip: bool, navbar: bool, login: bool}, entity_filter_autocomplete: array{enabled: bool}, tags: array{enabled: bool}} */
         return (new Processor())->processConfiguration($configuration, $configs);
     }
 }
