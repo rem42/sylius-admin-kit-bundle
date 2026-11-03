@@ -25,6 +25,7 @@ final class ConfigurationTest extends TestCase
         self::assertFalse($config['quick_filter']['enabled']);
         self::assertFalse($config['environment']['enabled']);
         self::assertFalse($config['entity_filter_autocomplete']['enabled']);
+        self::assertFalse($config['tags']['enabled']);
         self::assertNull($config['theme']);
         self::assertSame([], $config['themes']);
     }
@@ -96,6 +97,7 @@ final class ConfigurationTest extends TestCase
      *     quick_filter: array{enabled: bool},
      *     environment: array{enabled: bool, name: string, strip: bool, navbar: bool, login: bool, environments: array<string, array{label: ?string, color: string, foreground: string}>},
      *     entity_filter_autocomplete: array{enabled: bool},
+     *     tags: array{enabled: bool},
      * }
      */
     private function process(array $config): array
@@ -106,7 +108,7 @@ final class ConfigurationTest extends TestCase
         $configuration = $extension->getConfiguration($configs, new ContainerBuilder());
         self::assertInstanceOf(ConfigurationInterface::class, $configuration);
 
-        /** @var array{theme: ?string, themes: array<string, string>, quick_filter: array{enabled: bool}, environment: array{enabled: bool, name: string, strip: bool, navbar: bool, login: bool, environments: array<string, array{label: ?string, color: string, foreground: string}>}, entity_filter_autocomplete: array{enabled: bool}} */
+        /** @var array{theme: ?string, themes: array<string, string>, quick_filter: array{enabled: bool}, environment: array{enabled: bool, name: string, strip: bool, navbar: bool, login: bool, environments: array<string, array{label: ?string, color: string, foreground: string}>}, entity_filter_autocomplete: array{enabled: bool}, tags: array{enabled: bool}} */
         return (new Processor())->processConfiguration($configuration, $configs);
     }
 }

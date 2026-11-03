@@ -10,3 +10,7 @@ rem42_sylius_admin_kit:
                 between: 'From %from% to %to%'
                 from: 'From %from%'
                 to: 'Until %to%'
+        tags:
+            placeholder: 'Add…'
+            remove: 'Remove %tag%'
+            invalid: '"%tag%" is not valid.'

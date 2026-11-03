@@ -1486,6 +1486,9 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     entity_filter_autocomplete?: array{
  *         enabled?: bool|Param, // Default: false
  *     },
+ *     tags?: array{ // TagsType form type: a list of strings typed as removable tags (Stimulus controller "admin-kit--tags").
+ *         enabled?: bool|Param, // Default: false
+ *     },
  * }
  * @psalm-type SymfonycastsTailwindConfig = array{
  *     input_css?: list<scalar|Param|null>,

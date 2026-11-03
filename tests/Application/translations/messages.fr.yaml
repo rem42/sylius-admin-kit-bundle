@@ -11,6 +11,8 @@ app:
         author_name: Nom de l'auteur
         category: Catégorie
         choose_category: Choisir une catégorie
+        tags: Étiquettes
+        tags_help: Entrée ou une virgule ajoute une étiquette.
         summary: Résumé
         available: Disponible
         created_at: Ajouté le

@@ -9,3 +9,5 @@ rem42_sylius_admin_kit:
         enabled: false
     entity_filter_autocomplete:
         enabled: false
+    tags:
+        enabled: false

@@ -7,3 +7,5 @@ rem42_sylius_admin_kit:
         enabled: true
     entity_filter_autocomplete:
         enabled: true
+    tags:
+        enabled: true
