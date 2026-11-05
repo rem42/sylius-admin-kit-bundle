@@ -64,7 +64,8 @@ Behaviour to know:
   without a provider or when it returns `null`), rendered by the themes like any other count.
 * When counts are available, tabs at 0 are hidden, unless they are the active tab.
 * An unknown tone is ignored (no dot). Tones are the constants of `Tone` (`Tone::BLUE`, ..., listed in `Tone::ALL`): `blue`, `azure`, `indigo`, `purple`,
-  `pink`, `red`, `orange`, `yellow`, `lime`, `green`, `teal`, `cyan`, `gray`.
+  `pink`, `red`, `orange`, `yellow`, `lime`, `green`, `teal`, `cyan`, `gray`, `grey`, `brown`, `success`, `danger`, `warning`, `info`,
+  `primary`, `secondary`, `muted`, `dark`, `body`, `black`.
 * If the criterion of the request is an array (`criteria[category][]=...`) or an unknown value, the grid is
   filtered as usual but no tab is active.
 
@@ -86,5 +87,5 @@ returns `null` or:
 ]
 ```
 
-* shadcn: underlined tabs, dot with a full Tailwind class per tone, count in a rounded pill.
-* bootstrap: Tabler underlined `ul.nav.nav-bordered` (scrolls sideways on narrow screens), `span.status-dot.status-{tone}`, count in `span.badge`.
+* shadcn: underlined tabs, dot colored by the `tone` macro of the shadcn-admin-ui palette, count in a rounded pill.
+* bootstrap: Tabler underlined `ul.nav.nav-bordered` (scrolls sideways on narrow screens), `span.status-dot.status-{tone}` (`gray` and `grey` use `secondary`, `brown` uses `orange`, `body` and `black` use `dark`), count in `span.badge`.

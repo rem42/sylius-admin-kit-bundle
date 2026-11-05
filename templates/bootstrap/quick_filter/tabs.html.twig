@@ -10,6 +10,8 @@
         [data-admin-kit="quick-filter"] .nav-link { padding-inline: .5rem; }
         [data-admin-kit="quick-filter"] .nav-link:focus-visible { box-shadow: inset 0 0 0 2px var(--tblr-primary); border-radius: var(--tblr-border-radius) var(--tblr-border-radius) 0 0; }
     </style>
+    {# Tones without a Tabler status class, mapped like the shadcn palette. #}
+    {% set status_aliases = {gray: 'secondary', grey: 'secondary', brown: 'orange', body: 'dark', black: 'dark'} %}
     <nav data-admin-kit="quick-filter" aria-label="{{ quick_filter.label }}" class="overflow-x-auto mb-3">
         <ul class="nav nav-bordered flex-nowrap">
             {% for tab in quick_filter.tabs %}
@@ -18,7 +20,7 @@
                        class="nav-link d-flex align-items-center gap-2 text-nowrap {{ tab.active ? 'active fw-medium' }}"
                        {% if tab.active %}aria-current="page"{% endif %}>
                         {% if tab.tone %}
-                            <span class="status-dot status-{{ tab.tone == 'gray' ? 'secondary' : tab.tone }} flex-shrink-0" aria-hidden="true"></span>
+                            <span class="status-dot status-{{ status_aliases[tab.tone] ?? tab.tone }} flex-shrink-0" aria-hidden="true"></span>
                         {% endif %}
                         {{ tab.label }}
                         {% if tab.count is not null %}

@@ -143,6 +143,17 @@ final class QuickFilterExtensionTest extends TestCase
         self::assertSame([null, null, null, null], array_column($result['tabs'], 'count'));
     }
 
+    public function testEveryToneOfThePaletteIsKept(): void
+    {
+        $tones = ['blue', 'azure', 'indigo', 'purple', 'pink', 'red', 'orange', 'yellow', 'lime', 'green', 'teal', 'cyan', 'gray', 'grey', 'brown', 'success', 'danger', 'warning', 'info', 'primary', 'secondary', 'muted', 'dark', 'body', 'black'];
+
+        foreach ($tones as $tone) {
+            $result = $this->extension(self::URL, ['p' => $this->provider(null, $tone)])->getQuickFilter($this->grid(['provider' => 'p']));
+            self::assertNotNull($result);
+            self::assertSame($tone, $result['tabs'][1]['tone']);
+        }
+    }
+
     public function testUnknownToneIsDropped(): void
     {
         $result = $this->extension(self::URL, ['p' => $this->provider(null, 'fuchsia')])->getQuickFilter($this->grid(['provider' => 'p']));
