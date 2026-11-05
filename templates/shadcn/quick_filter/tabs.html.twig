@@ -1,22 +1,7 @@
 {# Quick filter tabs above the grid: one link per value of the enum filter that has a "quick_filter" option. #}
+{% from '@Rem42ShadcnAdminUi/shared/helper/palette.html.twig' import tone %}
 {% set quick_filter = rem42_admin_kit_quick_filter(hookable_metadata.context.resources.definition|default(null)) %}
 {% if quick_filter %}
-    {# Written in full so that Tailwind finds the classes. #}
-    {% set dots = {
-        blue: 'bg-tone-blue',
-        azure: 'bg-tone-azure',
-        indigo: 'bg-tone-indigo',
-        purple: 'bg-tone-purple',
-        pink: 'bg-tone-pink',
-        red: 'bg-tone-red',
-        orange: 'bg-tone-orange',
-        yellow: 'bg-tone-yellow',
-        lime: 'bg-tone-lime',
-        green: 'bg-tone-green',
-        teal: 'bg-tone-teal',
-        cyan: 'bg-tone-cyan',
-        gray: 'bg-muted-foreground',
-    } %}
     <nav data-admin-kit="quick-filter" aria-label="{{ quick_filter.label }}" class="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
         <ul class="flex min-w-max items-center gap-1 border-b">
             {% for tab in quick_filter.tabs %}
@@ -25,7 +10,7 @@
                        class="-mb-px flex items-center gap-2 border-b-2 px-3 py-2 text-sm font-medium whitespace-nowrap outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 {{ tab.active ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:border-border hover:text-foreground' }}"
                        {% if tab.active %}aria-current="page"{% endif %}>
                         {% if tab.tone %}
-                            <span class="size-2 shrink-0 rounded-full {{ dots[tab.tone] }}" aria-hidden="true"></span>
+                            <span class="size-2 shrink-0 rounded-full {{ tone(tab.tone, 'dot')|trim }}" aria-hidden="true"></span>
                         {% endif %}
                         {{ tab.label }}
                         {% if tab.count is not null %}
