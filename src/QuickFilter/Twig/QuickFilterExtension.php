@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Rem42\SyliusAdminKit\QuickFilter\Twig;
 
 use Psr\Container\ContainerInterface;
+use Rem42\SyliusAdminKit\Grid\GridPage;
 use Rem42\SyliusAdminKit\QuickFilter\QuickFilterProviderInterface;
 use Rem42\SyliusAdminKit\QuickFilter\Tone;
 use Sylius\Component\Grid\Definition\Filter;
 use Sylius\Component\Grid\Definition\Grid;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
@@ -31,8 +30,7 @@ final class QuickFilterExtension extends AbstractExtension
     public function __construct(
         private readonly ContainerInterface $providers,
         private readonly TranslatorInterface $translator,
-        private readonly RequestStack $requestStack,
-        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly GridPage $page,
     ) {}
 
     public function getFunctions(): array
@@ -47,12 +45,10 @@ final class QuickFilterExtension extends AbstractExtension
      */
     public function getQuickFilter(?Grid $grid): ?array
     {
-        $request = $this->requestStack->getCurrentRequest();
+        $criteria = $this->page->criteria();
         $filter = $this->findFilter($grid);
 
-        $route = $request?->attributes->get('_route');
-
-        if (null === $request || !\is_string($route) || null === $filter) {
+        if (null === $criteria || null === $filter) {
             return null;
         }
 
@@ -70,29 +66,15 @@ final class QuickFilterExtension extends AbstractExtension
 
         $criterion = $filter->getName();
 
-        $rawCriteria = $request->query->all()['criteria'] ?? [];
-
-        /** @var array<string, mixed> $criteria */
-        $criteria = \is_array($rawCriteria) ? $rawCriteria : [];
-        $rawCurrent = $criteria[$criterion] ?? null;
+        $rawCurrent = $criteria[$criterion] ?? '';
         // A non-scalar criterion (criteria[x][]=...) still filters the grid, but matches no tab: nothing is active.
-        $nonScalar = null !== $rawCurrent && !\is_scalar($rawCurrent);
         $current = \is_scalar($rawCurrent) ? (string) $rawCurrent : null;
-
-        /** @var array<string, mixed> $routeParams */
-        $routeParams = $request->attributes->get('_route_params', []);
-
-        $base = $routeParams + array_diff_key($request->query->all(), ['page' => true, 'criteria' => true]);
-        $others = array_diff_key($criteria, [$criterion => true]);
-
-        $url = fn (?string $value): string => $this->urlGenerator->generate($route, $base + ([] !== $others || null !== $value
-            ? ['criteria' => $others + (null !== $value ? [$criterion => $value] : [])]
-            : []));
+        $otherCriteria = array_diff_key($criteria, [$criterion => true]);
 
         $tabs = [[
             'label' => $this->translator->trans($options['all_label'] ?? 'sylius.ui.all'),
-            'url' => $url(null),
-            'active' => !$nonScalar && (null === $current || '' === $current),
+            'url' => $this->page->url($otherCriteria),
+            'active' => '' === $current,
             'count' => null === $counts ? null : array_sum($counts),
             'tone' => null,
         ]];
@@ -100,7 +82,7 @@ final class QuickFilterExtension extends AbstractExtension
         foreach ($options['cases'] ?? $enumClass::cases() as $case) {
             $case = $case instanceof \BackedEnum ? $case : $enumClass::from($case);
             $value = (string) $case->value;
-            $active = !$nonScalar && $value === $current;
+            $active = $value === $current;
             $count = null === $counts ? null : $counts[$case->value] ?? 0;
 
             if (0 === $count && !$active) {
@@ -109,7 +91,7 @@ final class QuickFilterExtension extends AbstractExtension
 
             $tabs[] = [
                 'label' => $case instanceof TranslatableInterface ? $case->trans($this->translator) : $this->translator->trans($value),
-                'url' => $url($value),
+                'url' => $this->page->url($otherCriteria + [$criterion => $value]),
                 'active' => $active,
                 'count' => $count,
                 'tone' => Tone::normalize($provider?->getColor($case)),

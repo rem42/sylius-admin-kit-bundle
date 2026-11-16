@@ -8,7 +8,6 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $container): void {
     $container->services()
         ->set('rem42_sylius_admin_kit.twig.extension.environment', EnvironmentExtension::class)
-        ->args(['', []])
         ->tag('twig.extension')
     ;
 };

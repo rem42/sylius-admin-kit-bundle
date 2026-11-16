@@ -22,6 +22,7 @@ final class ActiveFiltersFeatureTest extends BundleTestCase
 
         self::assertTrue($container->has(self::SERVICE));
         self::assertTrue($container->has('rem42_sylius_admin_kit.active_filters.criterion_formatter'));
+        self::assertTrue($container->has('rem42_sylius_admin_kit.grid.page'));
         self::assertIsArray($hookable);
         self::assertSame('@Rem42SyliusAdminKit/bootstrap/active_filters/bar.html.twig', $hookable['template']);
         self::assertSame(50, $hookable['priority']);

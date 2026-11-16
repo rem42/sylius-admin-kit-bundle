@@ -52,15 +52,11 @@ export default class extends Controller {
         }
 
         event.preventDefault();
-        const rejected = this.split(text).filter((tag) => !this.add(tag));
-        this.entryTarget.value = rejected.join(' ');
-        this.showError(rejected);
+        this.addAll(text);
     }
 
     commit() {
-        const rejected = this.split(this.entryTarget.value).filter((tag) => !this.add(tag));
-        this.entryTarget.value = rejected.join(' ');
-        this.showError(rejected);
+        this.addAll(this.entryTarget.value);
     }
 
     remove(event) {
@@ -72,6 +68,13 @@ export default class extends Controller {
 
     clearError() {
         this.showError([]);
+    }
+
+    /** Adds every tag of the text; the refused ones stay in the input, with an error. */
+    addAll(text) {
+        const rejected = this.split(text).filter((tag) => !this.add(tag));
+        this.entryTarget.value = rejected.join(' ');
+        this.showError(rejected);
     }
 
     /** Adds a tag; a duplicate is ignored (counted as added), a tag not matching the pattern is refused. */
@@ -90,11 +93,12 @@ export default class extends Controller {
         }
 
         const element = this.templateTarget.content.firstElementChild.cloneNode(true);
+        const button = element.querySelector('button');
         const label = this.removeLabelValue.replace('%tag%', tag);
         element.dataset.adminKitTag = tag;
         element.querySelector('[data-admin-kit-tag-label]').textContent = tag;
-        element.querySelector('button').title = label;
-        element.querySelector('button').setAttribute('aria-label', label);
+        button.title = label;
+        button.setAttribute('aria-label', label);
         this.listTarget.append(element);
         this.sync();
 
@@ -144,7 +148,7 @@ export default class extends Controller {
     }
 
     split(text) {
-        return text.split(new RegExp(this.splitPatternValue, 'u')).map((tag) => tag.trim()).filter((tag) => tag !== '');
+        return text.split(this.separator()).map((tag) => tag.trim()).filter((tag) => tag !== '');
     }
 
     tags() {

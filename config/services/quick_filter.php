@@ -14,8 +14,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             tagged_locator('rem42_sylius_admin_kit.quick_filter_provider'),
             service('translator'),
-            service('request_stack'),
-            service('router'),
+            service('rem42_sylius_admin_kit.grid.page'),
         ])
         ->tag('twig.extension')
     ;

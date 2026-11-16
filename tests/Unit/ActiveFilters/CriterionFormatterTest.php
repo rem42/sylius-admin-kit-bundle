@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Rem42\SyliusAdminKit\Unit\ActiveFilters;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Rem42\SyliusAdminKit\ActiveFilters\CriterionFormatter;
@@ -71,5 +73,25 @@ final class CriterionFormatterTest extends TestCase
 
         yield 'unknown type, scalar' => ['custom', 'foo', 'foo'];
         yield 'unknown type, nested array' => ['custom', ['a' => 'x', 'b' => ['c' => 'y', 'd' => '']], 'x, y'];
+    }
+
+    /**
+     * "date" is a PHP function too: a string "choice_label" is a property path, as in the Symfony ChoiceType.
+     */
+    public function testEntityChoiceLabelStringIsAPropertyPathNotAFunctionName(): void
+    {
+        $entity = new class {
+            public string $date = 'Third Age';
+        };
+
+        $manager = $this->createStub(ObjectManager::class);
+        $manager->method('find')->willReturn($entity);
+        $doctrine = $this->createStub(ManagerRegistry::class);
+        $doctrine->method('getManagerForClass')->willReturn($manager);
+
+        $filter = Filter::fromNameAndType('era', 'entity');
+        $filter->setFormOptions(['class' => $entity::class, 'choice_label' => 'date']);
+
+        self::assertSame('Third Age', (new CriterionFormatter(new EchoTranslator(), $doctrine))->format($filter, '42', 'fr'));
     }
 }

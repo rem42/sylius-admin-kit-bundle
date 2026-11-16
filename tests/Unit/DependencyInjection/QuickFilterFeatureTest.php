@@ -22,6 +22,7 @@ final class QuickFilterFeatureTest extends BundleTestCase
         $hookable = $this->hookable($container);
 
         self::assertTrue($container->has(self::SERVICE));
+        self::assertTrue($container->has('rem42_sylius_admin_kit.grid.page'));
         self::assertIsArray($hookable);
         self::assertSame('@Rem42SyliusAdminKit/bootstrap/quick_filter/tabs.html.twig', $hookable['template']);
         self::assertSame(100, $hookable['priority']);
@@ -51,6 +52,7 @@ final class QuickFilterFeatureTest extends BundleTestCase
         $container = $this->buildContainer(['quick_filter' => ['enabled' => false]]);
 
         self::assertFalse($container->has(self::SERVICE));
+        self::assertFalse($container->has('rem42_sylius_admin_kit.grid.page'));
         self::assertSame([], $this->hooks($container));
         self::assertArrayNotHasKey(QuickFilterProviderInterface::class, $container->getAutoconfiguredInstanceof());
     }

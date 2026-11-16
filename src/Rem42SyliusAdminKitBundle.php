@@ -8,6 +8,8 @@ use Rem42\SyliusAdminKit\Environment\Twig\EnvironmentExtension;
 use Rem42\SyliusAdminKit\QuickFilter\QuickFilterProviderInterface;
 use Rem42\SyliusAdminKit\Theme\ThemeResolver;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
+use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use Symfony\Component\Config\Definition\Builder\ScalarNodeDefinition;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -15,6 +17,24 @@ use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterf
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
+/**
+ * @phpstan-type Config array{
+ *     theme: ?string,
+ *     themes: array<string, string>,
+ *     quick_filter: array{enabled: bool},
+ *     active_filters: array{enabled: bool},
+ *     environment: array{
+ *         enabled: bool,
+ *         name: string,
+ *         environments: array<string, array{label: ?string, color: string, foreground: string}>,
+ *         strip: bool,
+ *         navbar: bool,
+ *         login: bool,
+ *     },
+ *     entity_filter_autocomplete: array{enabled: bool},
+ *     tags: array{enabled: bool},
+ * }
+ */
 final class Rem42SyliusAdminKitBundle extends AbstractBundle
 {
     protected string $extensionAlias = 'rem42_sylius_admin_kit';
@@ -26,108 +46,102 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
 
     public function configure(DefinitionConfigurator $definition): void
     {
-        $definition->rootNode()
-            ->children()
-            ->scalarNode('theme')
+        $root = $definition->rootNode()->children();
+
+        $root->scalarNode('theme')
             ->defaultNull()
             ->info('Theme whose templates are used. null = auto: "shadcn" if Rem42ShadcnAdminUiBundle is loaded, "bootstrap" otherwise.')
-            ->end()
-            ->arrayNode('themes')
+        ;
+
+        $root->arrayNode('themes')
             ->info('Custom themes: name => templates directory holding the same files as templates/{shadcn,bootstrap}/.')
             ->useAttributeAsKey('name')
             ->scalarPrototype()->end()
             ->defaultValue([])
-            ->end()
-            ->arrayNode('quick_filter')
-            ->addDefaultsIfNotSet()
-            ->children()
-            ->booleanNode('enabled')->defaultFalse()->end()
-            ->end()
-            ->end()
-            ->arrayNode('active_filters')
-            ->info('Bar listing the criteria that filter the grid, each removable on its own.')
-            ->addDefaultsIfNotSet()
-            ->children()
-            ->booleanNode('enabled')->defaultFalse()->end()
-            ->end()
-            ->end()
-            ->arrayNode('environment')
-            ->info('Coloured strip on top of every admin page and badge in the navbar and on the login page.')
-            ->addDefaultsIfNotSet()
-            ->children()
-            ->booleanNode('enabled')->defaultFalse()->end()
-            ->scalarNode('name')
+        ;
+
+        $this->addFeature($root, 'quick_filter');
+        $this->addFeature($root, 'active_filters', 'Bar listing the criteria that filter the grid, each removable on its own.');
+        $this->addEnvironment($root);
+        $this->addFeature($root, 'entity_filter_autocomplete');
+        $this->addFeature($root, 'tags', 'TagsType form type: a list of strings typed as removable tags (Stimulus controller "admin-kit--tags").');
+    }
+
+    /**
+     * Section of an opt-in feature, disabled by default. Returns its options, to add the ones it has besides "enabled".
+     */
+    private function addFeature(NodeBuilder $root, string $name, ?string $info = null): NodeBuilder
+    {
+        $feature = $root->arrayNode($name)->addDefaultsIfNotSet();
+
+        if (null !== $info) {
+            $feature->info($info);
+        }
+
+        $options = $feature->children();
+        $options->booleanNode('enabled')->defaultFalse();
+
+        return $options;
+    }
+
+    private function addEnvironment(NodeBuilder $root): void
+    {
+        $options = $this->addFeature($root, 'environment', 'Coloured strip on top of every admin page and badge in the navbar and on the login page.');
+
+        $options->scalarNode('name')
             ->info('Current environment, e.g. "%env(default:kernel.environment:APP_STAGE)%".')
             ->defaultValue('%kernel.environment%')
-            ->end()
-            ->arrayNode('environments')
+        ;
+
+        $environment = $options->arrayNode('environments')
             ->info('Environments that show the indicator. Any other one (e.g. "prod") shows nothing.')
             ->useAttributeAsKey('name')
             ->performNoDeepMerging()
-            ->arrayPrototype()
-            ->children()
-            ->scalarNode('label')->defaultNull()->info('Defaults to the upper-cased environment name.')->end()
-            ->scalarNode('color')
-            ->isRequired()
-            ->cannotBeEmpty()
-            ->info('Any CSS color.')
-            ->validate()
-            ->ifTrue(static fn (mixed $v): bool => \is_string($v) && 1 === preg_match(EnvironmentExtension::FORBIDDEN_COLOR_CHARACTERS, $v))
-            ->thenInvalid('Invalid CSS color %s.')
-            ->end()
-            ->end()
-            ->scalarNode('foreground')
-            ->defaultValue('#fff')
-            ->info('Text color on top of "color".')
-            ->validate()
-            ->ifTrue(static fn (mixed $v): bool => \is_string($v) && 1 === preg_match(EnvironmentExtension::FORBIDDEN_COLOR_CHARACTERS, $v))
-            ->thenInvalid('Invalid CSS color %s.')
-            ->end()
-            ->end()
-            ->end()
-            ->end()
             ->defaultValue([
                 'dev' => ['label' => null, 'color' => 'oklch(55.3% 0.195 38.402)', 'foreground' => '#fff'],
                 'test' => ['label' => null, 'color' => 'oklch(54.1% 0.281 293.009)', 'foreground' => '#fff'],
                 'staging' => ['label' => null, 'color' => 'oklch(54.6% 0.245 262.881)', 'foreground' => '#fff'],
                 'preprod' => ['label' => null, 'color' => 'oklch(54.6% 0.245 262.881)', 'foreground' => '#fff'],
             ])
-            ->end()
-            ->booleanNode('strip')->defaultTrue()->end()
-            ->booleanNode('navbar')->defaultTrue()->end()
-            ->booleanNode('login')->defaultTrue()->end()
-            ->end()
-            ->end()
-            ->arrayNode('entity_filter_autocomplete')
-            ->addDefaultsIfNotSet()
+            ->arrayPrototype()
             ->children()
-            ->booleanNode('enabled')->defaultFalse()->end()
-            ->end()
-            ->end()
-            ->arrayNode('tags')
-            ->info('TagsType form type: a list of strings typed as removable tags (Stimulus controller "admin-kit--tags").')
-            ->addDefaultsIfNotSet()
-            ->children()
-            ->booleanNode('enabled')->defaultFalse()->end()
-            ->end()
-            ->end()
-            ->end()
         ;
+
+        $environment->scalarNode('label')->defaultNull()->info('Defaults to the upper-cased environment name.');
+        $this->addColor($environment, 'color')->isRequired()->cannotBeEmpty()->info('Any CSS color.');
+        $this->addColor($environment, 'foreground')->defaultValue('#fff')->info('Text color on top of "color".');
+
+        $options->booleanNode('strip')->defaultTrue();
+        $options->booleanNode('navbar')->defaultTrue();
+        $options->booleanNode('login')->defaultTrue();
+    }
+
+    /**
+     * A CSS color, refused when it could escape the declaration it is printed in.
+     */
+    private function addColor(NodeBuilder $node, string $name): ScalarNodeDefinition
+    {
+        $color = $node->scalarNode($name);
+        $color->validate()
+            ->ifTrue(static fn (mixed $value): bool => \is_string($value) && 1 === preg_match(EnvironmentExtension::FORBIDDEN_COLOR_CHARACTERS, $value))
+            ->thenInvalid('Invalid CSS color %s.')
+        ;
+
+        return $color;
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
     {
         $config = $this->processConfiguration($builder);
 
-        /** @var array<string, mixed> $kernelBundles */
-        $kernelBundles = $builder->getParameter('kernel.bundles');
+        $kernelBundles = $this->kernelBundles($builder);
         $theme = ThemeResolver::resolve($config['theme'], $config['themes'], $kernelBundles);
 
         $builder->setParameter('rem42_sylius_admin_kit.theme', $theme->name);
         $builder->setParameter('rem42_sylius_admin_kit.template_prefix', $theme->templatePrefix);
 
         if ($config['tags']['enabled']) {
-            $this->prependTags($container, $builder, $theme->templatePrefix);
+            $this->prependTags($container, $kernelBundles, $theme->templatePrefix);
         }
 
         if (!isset($kernelBundles['SyliusTwigHooksBundle'])) {
@@ -221,12 +235,11 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
     /**
      * The form theme of the tags widget, and its Stimulus controller next to the application ones (identifier
      * "admin-kit--tags", from its sub-directory), the way rem42/shadcn-admin-ui exposes its controllers.
+     *
+     * @param array<string, mixed> $kernelBundles
      */
-    private function prependTags(ContainerConfigurator $container, ContainerBuilder $builder, string $templatePrefix): void
+    private function prependTags(ContainerConfigurator $container, array $kernelBundles, string $templatePrefix): void
     {
-        /** @var array<string, mixed> $kernelBundles */
-        $kernelBundles = $builder->getParameter('kernel.bundles');
-
         if (isset($kernelBundles['TwigBundle'])) {
             $container->extension('twig', ['form_themes' => [$templatePrefix . '/tags/form_theme.html.twig']], prepend: true);
         }
@@ -245,37 +258,28 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param Config $config
      */
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
-        /** @var array{enabled: bool, name: string, environments: array<string, mixed>} $environment */
-        $environment = $config['environment'];
+        $kernelBundles = $this->kernelBundles($builder);
 
-        /** @var array{enabled: bool} $quickFilter */
-        $quickFilter = $config['quick_filter'];
+        if ($config['quick_filter']['enabled'] || $config['active_filters']['enabled']) {
+            $container->import('../config/services/grid.php');
+        }
 
-        if ($quickFilter['enabled']) {
+        if ($config['quick_filter']['enabled']) {
             $container->import('../config/services/quick_filter.php');
             $builder->registerForAutoconfiguration(QuickFilterProviderInterface::class)
                 ->addTag('rem42_sylius_admin_kit.quick_filter_provider')
             ;
         }
 
-        /** @var array{enabled: bool} $activeFilters */
-        $activeFilters = $config['active_filters'];
-
-        if ($activeFilters['enabled']) {
+        if ($config['active_filters']['enabled']) {
             $container->import('../config/services/active_filters.php');
         }
 
-        /** @var array{enabled: bool} $entityFilter */
-        $entityFilter = $config['entity_filter_autocomplete'];
-
-        if ($entityFilter['enabled']) {
-            /** @var array<string, mixed> $kernelBundles */
-            $kernelBundles = $builder->getParameter('kernel.bundles');
-
+        if ($config['entity_filter_autocomplete']['enabled']) {
             if (!isset($kernelBundles['AutocompleteBundle'])) {
                 throw new \LogicException('The "entity_filter_autocomplete" feature of rem42_sylius_admin_kit requires symfony/ux-autocomplete: install it and enable its AutocompleteBundle.');
             }
@@ -283,13 +287,7 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
             $container->import('../config/services/entity_filter.php');
         }
 
-        /** @var array{enabled: bool} $tags */
-        $tags = $config['tags'];
-
-        if ($tags['enabled']) {
-            /** @var array<string, mixed> $kernelBundles */
-            $kernelBundles = $builder->getParameter('kernel.bundles');
-
+        if ($config['tags']['enabled']) {
             if (!isset($kernelBundles['StimulusBundle'])) {
                 throw new \LogicException('The "tags" feature of rem42_sylius_admin_kit requires symfony/stimulus-bundle: install it and enable its StimulusBundle.');
             }
@@ -297,17 +295,28 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
             $container->import('../config/services/tags.php');
         }
 
-        if ($environment['enabled']) {
+        if ($config['environment']['enabled']) {
             $container->import('../config/services/environment.php');
             $container->services()->get('rem42_sylius_admin_kit.twig.extension.environment')
-                ->arg('$name', $environment['name'])
-                ->arg('$environments', $environment['environments'])
+                ->arg('$name', $config['environment']['name'])
+                ->arg('$environments', $config['environment']['environments'])
             ;
         }
     }
 
     /**
-     * @return array{theme: ?string, themes: array<string, string>, quick_filter: array{enabled: bool}, active_filters: array{enabled: bool}, environment: array{enabled: bool, name: string, environments: array<string, array{label: ?string, color: string, foreground: string}>, strip: bool, navbar: bool, login: bool}, entity_filter_autocomplete: array{enabled: bool}, tags: array{enabled: bool}}
+     * @return array<string, mixed> the "kernel.bundles" parameter: bundle name => class
+     */
+    private function kernelBundles(ContainerBuilder $builder): array
+    {
+        /** @var array<string, mixed> */
+        return $builder->getParameter('kernel.bundles');
+    }
+
+    /**
+     * The configuration of the bundle while prepending, which Symfony only gives to loadExtension().
+     *
+     * @return Config
      */
     private function processConfiguration(ContainerBuilder $builder): array
     {
@@ -326,7 +335,7 @@ final class Rem42SyliusAdminKitBundle extends AbstractBundle
             throw new \LogicException('The bundle extension must provide a configuration.');
         }
 
-        /** @var array{theme: ?string, themes: array<string, string>, quick_filter: array{enabled: bool}, active_filters: array{enabled: bool}, environment: array{enabled: bool, name: string, environments: array<string, array{label: ?string, color: string, foreground: string}>, strip: bool, navbar: bool, login: bool}, entity_filter_autocomplete: array{enabled: bool}, tags: array{enabled: bool}} */
+        /** @var Config */
         return (new Processor())->processConfiguration($configuration, $configs);
     }
 }

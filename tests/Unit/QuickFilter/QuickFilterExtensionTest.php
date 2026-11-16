@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Rem42\SyliusAdminKit\Unit\QuickFilter;
 
 use PHPUnit\Framework\TestCase;
+use Rem42\SyliusAdminKit\Grid\GridPage;
 use Rem42\SyliusAdminKit\QuickFilter\QuickFilterProviderInterface;
 use Rem42\SyliusAdminKit\QuickFilter\Twig\QuickFilterExtension;
 use Sylius\Component\Grid\Definition\Filter;
@@ -254,8 +255,7 @@ final class QuickFilterExtensionTest extends TestCase
         return new QuickFilterExtension(
             new ServiceLocator(array_map(static fn (QuickFilterProviderInterface $p): \Closure => static fn (): QuickFilterProviderInterface => $p, $providers)),
             $translator,
-            $requests,
-            new UrlGenerator($routes, new RequestContext()),
+            new GridPage($requests, new UrlGenerator($routes, new RequestContext())),
         );
     }
 

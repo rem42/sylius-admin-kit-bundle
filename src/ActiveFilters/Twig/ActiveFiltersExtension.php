@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Rem42\SyliusAdminKit\ActiveFilters\Twig;
 
 use Rem42\SyliusAdminKit\ActiveFilters\CriterionFormatter;
+use Rem42\SyliusAdminKit\Grid\GridPage;
 use Sylius\Component\Grid\Definition\Filter;
 use Sylius\Component\Grid\Definition\Grid;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -25,8 +23,7 @@ final class ActiveFiltersExtension extends AbstractExtension
     public function __construct(
         private readonly CriterionFormatter $formatter,
         private readonly TranslatorInterface $translator,
-        private readonly RequestStack $requestStack,
-        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly GridPage $page,
     ) {}
 
     public function getFunctions(): array
@@ -41,14 +38,12 @@ final class ActiveFiltersExtension extends AbstractExtension
      */
     public function getActiveFilters(?Grid $grid): ?array
     {
-        $request = $this->requestStack->getCurrentRequest();
-        $route = $request?->attributes->get('_route');
+        $criteria = $this->page->criteria();
 
-        if (null === $request || null === $grid || !\is_string($route)) {
+        if (null === $grid || null === $criteria) {
             return null;
         }
 
-        $criteria = self::criteria($request);
         $items = [];
 
         foreach ($grid->getEnabledFilters() as $filter) {
@@ -62,7 +57,7 @@ final class ActiveFiltersExtension extends AbstractExtension
             $multiple = self::isMultiple($criterion);
 
             foreach ($multiple ? $criterion : [$criterion] as $index => $value) {
-                $text = $this->formatter->format($filter, $value, $request->getLocale());
+                $text = $this->formatter->format($filter, $value, $this->translator->getLocale());
 
                 if (null === $text) {
                     continue;
@@ -72,7 +67,7 @@ final class ActiveFiltersExtension extends AbstractExtension
                     'name' => $name,
                     'label' => $this->label($filter),
                     'value' => $text,
-                    'remove_url' => $this->url($request, $route, self::without($criteria, $name, $multiple ? $index : null)),
+                    'remove_url' => $this->page->url(self::without($criteria, $name, $multiple ? $index : null)),
                 ];
             }
         }
@@ -83,23 +78,8 @@ final class ActiveFiltersExtension extends AbstractExtension
 
         return [
             'filters' => $items,
-            'clear_url' => $this->url($request, $route, []),
+            'clear_url' => $this->page->url([]),
         ];
-    }
-
-    /**
-     * URL of the current page with the given criteria. Other query parameters (limit, sorting...) are kept, the page
-     * is dropped: it may not exist anymore.
-     *
-     * @param array<string, mixed> $criteria
-     */
-    private function url(Request $request, string $route, array $criteria): string
-    {
-        /** @var array<string, mixed> $routeParams */
-        $routeParams = $request->attributes->get('_route_params', []);
-        $query = array_diff_key($request->query->all(), ['page' => true, 'criteria' => true]);
-
-        return $this->urlGenerator->generate($route, $routeParams + $query + ([] === $criteria ? [] : ['criteria' => $criteria]));
     }
 
     /**
@@ -115,17 +95,6 @@ final class ActiveFiltersExtension extends AbstractExtension
         }
 
         return ucfirst(strtolower(trim((string) preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $filter->getName()))));
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private static function criteria(Request $request): array
-    {
-        $criteria = $request->query->all()['criteria'] ?? [];
-
-        /** @var array<string, mixed> */
-        return \is_array($criteria) ? $criteria : [];
     }
 
     /**

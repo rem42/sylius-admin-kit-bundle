@@ -25,8 +25,7 @@ return static function (ContainerConfigurator $container): void {
         ->args([
             service('rem42_sylius_admin_kit.active_filters.criterion_formatter'),
             service('translator'),
-            service('request_stack'),
-            service('router'),
+            service('rem42_sylius_admin_kit.grid.page'),
         ])
         ->tag('twig.extension')
     ;

@@ -72,7 +72,7 @@ final class TagsType extends AbstractType
         $resolver->setAllowedTypes('unique', 'bool');
         $resolver->setAllowedValues('input_type', ['text', 'email', 'url', 'tel', 'search']);
         $resolver->setAllowedTypes('entry_placeholder', ['null', 'string']);
-        $resolver->setAllowedValues('split_pattern', static fn (string $pattern): bool => '' !== $pattern && false !== @preg_match('/' . str_replace('/', '\/', $pattern) . '/u', ''));
+        $resolver->setAllowedValues('split_pattern', static fn (string $pattern): bool => '' !== $pattern && false !== @preg_match(self::splitRegex($pattern), ''));
     }
 
     public function getParent(): string
@@ -104,7 +104,15 @@ final class TagsType extends AbstractType
             }
         }
 
-        return preg_split('/' . str_replace('/', '\/', $splitPattern) . '/u', $value) ?: [];
+        return preg_split(self::splitRegex($splitPattern), $value) ?: [];
+    }
+
+    /**
+     * The "split_pattern" option, which has no delimiters, as a PCRE regex.
+     */
+    private static function splitRegex(string $splitPattern): string
+    {
+        return '/' . str_replace('/', '\/', $splitPattern) . '/u';
     }
 
     /**

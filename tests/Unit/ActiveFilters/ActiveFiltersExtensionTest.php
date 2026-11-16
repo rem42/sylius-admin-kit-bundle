@@ -7,6 +7,7 @@ namespace Tests\Rem42\SyliusAdminKit\Unit\ActiveFilters;
 use PHPUnit\Framework\TestCase;
 use Rem42\SyliusAdminKit\ActiveFilters\CriterionFormatter;
 use Rem42\SyliusAdminKit\ActiveFilters\Twig\ActiveFiltersExtension;
+use Rem42\SyliusAdminKit\Grid\GridPage;
 use Sylius\Component\Grid\Definition\Filter;
 use Sylius\Component\Grid\Definition\Grid;
 use Symfony\Component\HttpFoundation\Request;
@@ -127,8 +128,7 @@ final class ActiveFiltersExtensionTest extends TestCase
         return new ActiveFiltersExtension(
             new CriterionFormatter($translator),
             $translator,
-            $requests,
-            new UrlGenerator($routes, new RequestContext()),
+            new GridPage($requests, new UrlGenerator($routes, new RequestContext())),
         );
     }
 }

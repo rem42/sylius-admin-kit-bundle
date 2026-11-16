@@ -198,9 +198,10 @@ final class CriterionFormatter
 
         $choiceLabel = $formOptions['choice_label'] ?? null;
 
+        // A string is a property path, even when it names a PHP function ("date", "key"...): test it first.
         return match (true) {
-            \is_callable($choiceLabel) => self::scalar($choiceLabel($entity)),
             \is_string($choiceLabel) => self::scalar($this->propertyAccessor->getValue($entity, $choiceLabel)),
+            \is_callable($choiceLabel) => self::scalar($choiceLabel($entity)),
             $entity instanceof \Stringable => (string) $entity,
             default => $id,
         };
@@ -233,7 +234,7 @@ final class CriterionFormatter
         $choiceLabel = $formOptions['choice_label'] ?? null;
 
         return match (true) {
-            \is_callable($choiceLabel) => $this->translator->trans(self::scalar($choiceLabel($case))),
+            !\is_string($choiceLabel) && \is_callable($choiceLabel) => $this->translator->trans(self::scalar($choiceLabel($case))),
             $case instanceof TranslatableInterface => $case->trans($this->translator),
             default => $this->translator->trans($case->name),
         };
